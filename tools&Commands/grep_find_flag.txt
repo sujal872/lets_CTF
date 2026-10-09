@@ -1,0 +1,34 @@
+Haan, agar CTF/lab file mein flag plain text, nearby strings, ya common keywords ke saath hidden ho sakta hai, to ye advanced commands useful hain:
+
+1. strings + multiple keywords
+strings -a -n 4 file | grep -Ein 'flag|ctf|academy|secret|token|key|pass|password|challenge|gl17ch'
+
+2. Flag-format focused
+strings -a -n 4 file | grep -Eio '(academy|flag|ctf|gl17ch)\{[^}]{1,200}\}'
+
+3. Context ke saath
+strings -a -n 4 file | grep -Ein -C 5 'flag|ctf|academy|secret|token|key'
+
+Isse matching string ke aas-paas ki lines bhi milengi.
+
+4. Hex dump + printable strings
+strings -a -t x -n 4 file | grep -Ein 'flag|ctf|academy|secret|token|key|pass'
+
+-t x offset bhi dikhata hai, jo CTF mein kaafi useful hota hai.
+
+5. Recursive — directory ki saari files
+find . -type f -exec strings -a -n 4 {} + 2>/dev/null |
+grep -Ein 'flag|ctf|academy|secret|token|key|password|gl17ch'
+
+6. strings + grep + xxd — agar encoded-looking data mile
+strings -a -n 6 file |
+grep -Ei 'flag|ctf|academy|secret|token|key|[A-Za-z0-9+/]{20,}={0,2}'
+
+Last pattern Base64-looking strings ko bhi surface kar sakta hai.
+
+7. Sabse practical one-liner
+strings -a -t x -n 4 file 2>/dev/null |
+grep -Ein -C 3 'academy|flag|ctf|secret|token|password|passwd|pass|key'
+
+strings -a -t x gatekeeper |
+grep -Ein 'academy|flag|ctf|secret|key|password|passwd|token|correct|wrong|success|fail'
